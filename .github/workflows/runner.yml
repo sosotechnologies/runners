@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: XCite CI/CD with Argo
 
 on:
   push:
@@ -23,6 +23,17 @@ jobs:
         echo "new_version=$new_version" >> $GITHUB_ENV
         echo "::set-output name=new_version::$new_version"
 
+
+    - name: Commit updated files
+      run: |
+        git config --global user.name 'sosotechnologies'
+        git config --global user.email 'sosotech2000@gmail.com'
+        git commit -m "Bump versions to ${{ steps.bump_versions.outputs.new_version }}" || echo "No changes to commit"
+        git stash
+        git pull --rebase origin main
+        git stash pop || echo "No stashed changes"
+        git push origin main
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -40,26 +51,26 @@ jobs:
         docker build -t ${{ steps.bump_versions.outputs.new_version }} .
         IMAGE_TAG=${{ steps.bump_versions.outputs.new_version }}
         ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.us-east-1.amazonaws.com
-        REPOSITORY=xcite-worker
+        REPOSITORY=runners
         docker tag $IMAGE_TAG $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
         docker tag $IMAGE_TAG $ECR_REGISTRY/$REPOSITORY:latest
         docker push $ECR_REGISTRY/$REPOSITORY:latest
-        cd ..
+        cd ../..
 
-    - name: Run Trivy vulnerability scanner for runners
+    - name: Run Trivy vulnerability scanner for
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/runners:${{ github.sha }}
+        image-ref: ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.us-east-1.amazonaws.com/runners:${{ steps.bump_versions.outputs.new_version }}
         format: 'table'
         exit-code: '0'
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'MEDIUM,HIGH,CRITICAL'
-        output: 'docker/trivy-report-runners.txt'
+        output: 'docker/trivy-report.txt'
 
-    - name: Upload Trivy report for runners
+    - name: Upload Trivy report for
       uses: actions/upload-artifact@v3
       with:
-        name: trivy-report-runners
-        path: docker/trivy-report-runners.txt
+        name: trivy-report
+        path: docker/trivy-report.txt
