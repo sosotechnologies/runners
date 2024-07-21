@@ -1,0 +1,68 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build and Push image
+      run: |
+        cd docker
+        IMAGE_TAG=${{ github.sha }}
+        ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+        REPOSITORY=runners
+        docker build -t $IMAGE_TAG .
+        docker tag $IMAGE_TAG $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
+        docker tag $IMAGE_TAG $ECR_REGISTRY/$REPOSITORY:latest
+        docker push $ECR_REGISTRY/$REPOSITORY:latest
+        cd ..
+
+    - name: Run Trivy vulnerability scanner for runners
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/runners:${{ github.sha }}
+        format: 'table'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'MEDIUM,HIGH,CRITICAL'
+        output: 'docker/trivy-report-runners.txt'
+
+    - name: Upload Trivy report for runners
+      uses: actions/upload-artifact@v3
+      with:
+        name: trivy-report-runners
+        path: docker/trivy-report-runners.txt

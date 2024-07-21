@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-runner
+  template:
+    metadata:
+      labels:
+        app: github-runner
+    spec:
+      containers:
+      - name: github-runner
+        image: 368085106192.dkr.ecr.us-east-1.amazonaws.com/runners:latest
+        env:
+        - name: REPO_URL
+          valueFrom:
+            configMapKeyRef:
+              name: github-runner-config
+              key: REPO_URL
+        - name: RUNNER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github-runner-secret
+              key: RUNNER_TOKEN
+        volumeMounts:
+        - name: runner-config
+          mountPath: /actions-runner
+      volumes:
+      - name: runner-config
+        emptyDir: {}
+      imagePullSecrets:
+      - name: ecr-secret
+
+        
