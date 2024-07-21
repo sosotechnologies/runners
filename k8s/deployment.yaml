@@ -16,23 +16,24 @@ spec:
       - name: github-runner
         image: 368085106192.dkr.ecr.us-east-1.amazonaws.com/runners:latest
         env:
-        - name: REPO_URL
-          valueFrom:
-            configMapKeyRef:
-              name: github-runner-config
-              key: REPO_URL
         - name: RUNNER_TOKEN
           valueFrom:
             secretKeyRef:
               name: github-runner-secret
               key: RUNNER_TOKEN
+        - name: RUNNER_REPOSITORY_URL
+          valueFrom:
+            configMapKeyRef:
+              name: github-runner-config
+              key: RUNNER_REPOSITORY_URL
         volumeMounts:
-        - name: runner-config
-          mountPath: /actions-runner
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
       volumes:
-      - name: runner-config
-        emptyDir: {}
-      imagePullSecrets:
-      - name: ecr-secret
+      - name: docker-socket
+        hostPath:
+          path: /var/run/docker.sock
+
+        
 
         

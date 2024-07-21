@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: github-runner-config
 data:
-  REPO_URL: "https://github.com/sosotechnologies/runners"
+  RUNNER_REPOSITORY_URL: "https://github.com/sosotechnologies/runners"

@@ -16,6 +16,7 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 docker pull 368085106192.dkr.ecr.us-east-1.amazonaws.com/runners:latest
 
 docker run -itd <your-account-number>.dkr.ecr.us-east-1.amazonaws.com/runners:latest
+
 ```
 
 ```sh
@@ -29,6 +30,8 @@ kubectl create secret docker-registry ecr-secret \
 ```
 
 ```sh
+echo -n 'your-token-here' | base64
+
 kubectl apply -f k8s/configmap.yaml
 kubectl apply -f k8s/secret.yaml
 kubectl apply -f k8s/deployment.yaml
