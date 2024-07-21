@@ -1,51 +1,45 @@
-# base
+# Base image
 FROM ubuntu:18.04
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
-# set the github runner version
+# Set the GitHub runner version
 ARG RUNNER_VERSION="2.280.3"
 
-# update the base packages
-# RUN apt-get update -y && apt-get upgrade -y 
-RUN apt-get update -y
-# add a non-sudo user
-# RUN useradd -m docker
-RUN mkdir /home/docker
+# Update the base packages
+RUN apt-get update -y && apt-get upgrade -y
 
-# install python and the packages the your code depends on along with jq so we can parse JSON
-# add additional packages as necessary
-# RUN apt-get install -y curl jq build-essential libssl-dev libffi-dev python3 python3-venv python3-dev \
-#    --no-install-suggests --no-install-recommends
+# Install dependencies
 RUN apt-get install -y --no-install-suggests --no-install-recommends \
-curl \
-ca-certificates \
-jq
+    curl \
+    ca-certificates \
+    jq \
+    libssl-dev \
+    libffi-dev \
+    python3 \
+    python3-venv \
+    python3-dev \
+    build-essential
 
-# cd into the user directory, download and unzip the github actions runner
-RUN cd /home/docker && mkdir actions-runner && cd actions-runner \
-    && curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
+# Create a directory for the GitHub Actions runner
+RUN mkdir -p /home/docker/actions-runner
+WORKDIR /home/docker/actions-runner
+
+# Download the latest runner package
+RUN curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
     && tar xzf ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz
 
-# change ownership to non-sudo user
-#RUN chown -R docker ~docker && /home/docker/actions-runner/bin/installdependencies.sh
-# install some additional dependencies
+# Install dependencies for the runner
 RUN /home/docker/actions-runner/bin/installdependencies.sh
 
-# copy over the start.sh script
-COPY start.sh start.sh
+# Copy the start script
+COPY start.sh /home/docker/actions-runner/start.sh
 
-# make the script executable
-RUN chmod +x start.sh
+# Make the start script executable
+RUN chmod +x /home/docker/actions-runner/start.sh
 
-# since the config and run script for actions are not allowed to be run by root,
-# set the user to "docker" so all subsequent commands are run as the docker user
-# USER docker
+# Set the entrypoint to the start script
+ENTRYPOINT ["/home/docker/actions-runner/start.sh"]
 
-# add whatever packages your repository needs (so they don't have to be redownloaded over and over again)
-
-
-# set the entrypoint to the start.sh script
-ENTRYPOINT ["./start.sh"]
 
 
 # FROM ubuntu:20.04

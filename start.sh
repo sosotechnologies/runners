@@ -1,12 +1,12 @@
 #!/bin/bash
 
 if [[ -z $RUNNER_TOKEN && -z $GITHUB_ACCESS_TOKEN ]]; then
-    echo "Error : You need to set RUNNER_TOKEN (or GITHUB_ACCESS_TOKEN) environment variable."
+    echo "Error: You need to set RUNNER_TOKEN (or GITHUB_ACCESS_TOKEN) environment variable."
     exit 1
 fi
 
 if [[ -z $RUNNER_REPOSITORY_URL && -z $RUNNER_ORGANIZATION_URL ]]; then
-    echo "Error : You need to set the RUNNER_REPOSITORY_URL (or RUNNER_ORGANIZATION_URL) environment variable."
+    echo "Error: You need to set the RUNNER_REPOSITORY_URL (or RUNNER_ORGANIZATION_URL) environment variable."
     exit 1
 fi
 
@@ -19,7 +19,6 @@ else
 fi
 
 if [[ -n $GITHUB_ACCESS_TOKEN ]]; then
-
     echo "Exchanging the GitHub Access Token with a Runner Token (scope: ${SCOPE})..."
 
     _PROTO="$(echo "${RUNNER_URL}" | grep :// | sed -e's,^\(.*://\).*,\1,g')"
@@ -35,14 +34,10 @@ if [[ -n $GITHUB_ACCESS_TOKEN ]]; then
         | jq -r '.token')"
 fi
 
-
 cd /home/docker/actions-runner
 
 export RUNNER_ALLOW_RUNASROOT=1
-./config.sh \
-    --url $RUNNER_URL \
-    --token $RUNNER_TOKEN \
-
+./config.sh --url $RUNNER_URL --token $RUNNER_TOKEN --name $(hostname) --work _work --replace
 
 cleanup() {
     echo "Removing runner..."
