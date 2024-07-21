@@ -29,12 +29,10 @@ jobs:
       run: |
         git config --global user.name 'sosotechnologies'
         git config --global user.email 'sosotech2000@gmail.com'
-        git add .
+        git add VERSION scripts/bump_version.sh
         git commit -m "Bump versions to ${{ steps.bump_versions.outputs.new_version }}" || echo "No changes to commit"
-        git stash
-        git pull --rebase origin main
-        git stash pop || echo "No stashed changes"
         git remote set-url origin https://sosotechnologies:${{ secrets.ACTIONS_PAT }}@github.com/sosotechnologies/runners.git
+        git pull --rebase origin main
         git push origin main
 
     - name: Configure AWS Credentials
