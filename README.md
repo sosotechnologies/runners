@@ -35,3 +35,20 @@ kubectl apply -f k8s/deployment.yaml
 kubectl apply -f k8s/service.yaml
 kubectl get pods -l app=github-runner
 ```
+
+# Force  git push
+```sh 
+git checkout --orphan temp_branch
+git add -A
+git commit -am "Initial commit"
+git branch -D main
+git branch -m main
+git push -f origin main
+```
+
+<!-- git checkout --orphan temp_branch: Creates a new branch with no commit history.
+git add -A: Adds all files to the staging area.
+git commit -am "Initial commit": Commits all files with the message "Initial commit."
+git branch -D main: Deletes the old main branch.
+git branch -m main: Renames the current branch to main.
+git push -f origin main: Force pushes the new main branch to the remote repository, overwriting the existing history. -->

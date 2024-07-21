@@ -4,27 +4,24 @@ on:
   push:
     branches:
       - main
-      - develop
 
 jobs:
   build:
-    name: Build Docker image
+    name: Build and Push the images
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
-    - name: Cache Docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
+    - name: Bump versions
+      id: bump_versions
+      run: |
+        chmod +x scripts/bump_version.sh
+        ./scripts/bump_version.sh
+        new_version=$(cat VERSION)
+        echo "new_version=$new_version" >> $GITHUB_ENV
+        echo "::set-output name=new_version::$new_version"
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -40,10 +37,10 @@ jobs:
     - name: Build and Push image
       run: |
         cd docker
-        IMAGE_TAG=${{ github.sha }}
-        ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-        REPOSITORY=runners
-        docker build -t $IMAGE_TAG .
+        docker build -t ${{ steps.bump_versions.outputs.new_version }} .
+        IMAGE_TAG=${{ steps.bump_versions.outputs.new_version }}
+        ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.us-east-1.amazonaws.com
+        REPOSITORY=xcite-worker
         docker tag $IMAGE_TAG $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
         docker tag $IMAGE_TAG $ECR_REGISTRY/$REPOSITORY:latest
