@@ -1,6 +1,5 @@
 # Set the non-interactive frontend and default timezone
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Etc/UTC
 
 # Base image
 FROM ubuntu:20.04
