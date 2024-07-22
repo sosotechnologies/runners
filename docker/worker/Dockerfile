@@ -25,7 +25,7 @@ RUN curl -o actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz -L https://github.
     rm actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz
 
 # Add the start.sh script and make it executable
-COPY start.sh start.sh
+ADD  start.sh /start.sh
 # RUN chmod +x /start.sh
 
 # Set the entrypoint to the start.sh script
