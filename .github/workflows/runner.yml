@@ -56,7 +56,7 @@ jobs:
 
     - name: Build and Push worker image
       run: |
-        # cd docker/worker
+        cd docker/worker
         docker build --build-arg RUNNER_VERSION=${{ secrets.RUNNER_VERSION }} -t ${{ steps.bump_versions.outputs.new_version }} .
         IMAGE_TAG=${{ steps.bump_versions.outputs.new_version }}
         ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.us-east-1.amazonaws.com
