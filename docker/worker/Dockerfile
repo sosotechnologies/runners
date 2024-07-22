@@ -1,3 +1,7 @@
+# Set the non-interactive frontend and default timezone
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
 # Base image
 FROM ubuntu:20.04
 
@@ -17,7 +21,8 @@ RUN apt-get install -y --no-install-suggests --no-install-recommends \
     python3 \
     python3-venv \
     python3-dev \
-    build-essential
+    build-essential \
+    tzdata
 
 # Create a directory for the GitHub Actions runner
 RUN mkdir -p /home/docker/actions-runner
