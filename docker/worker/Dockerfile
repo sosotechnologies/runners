@@ -6,10 +6,10 @@ ARG RUNNER_VERSION=2.317.0
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Labels
-LABEL Author="Marcel L"
+LABEL Author="sosotechnologies"
 LABEL Email="sosotech200@gmail.com"
 LABEL GitHub="https://github.com/sosotechnologies"
-LABEL BaseImage="ubuntu:24.04"
+LABEL BaseImage="ubuntu:20.04"
 LABEL RunnerVersion=${RUNNER_VERSION}
 
 # Update and install required packages
