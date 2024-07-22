@@ -36,7 +36,7 @@ jobs:
       run: |
         git config --global user.name 'sosotechnologies'
         git config --global user.email 'sosotech2000@gmail.com'
-        git add VERSION argo-artifacts/source-pipeline.yaml argo-artifacts/recon-pipeline.yaml argo-artifacts/world-pipeline.yaml
+        git add VERSION argo-artifacts/source-pipeline.yaml  argo-artifacts/recon-pipeline.yaml argo-artifacts/world-pipeline.yaml
         git commit -m "Bump versions to ${{ steps.bump_versions.outputs.new_version }}" || echo "No changes to commit"
         git stash
         git pull --rebase origin main
@@ -57,7 +57,7 @@ jobs:
     - name: Build and Push worker image
       run: |
         cd docker/worker
-        docker build --build-arg RUNNER_VERSION=${{ secrets.RUNNER_VERSION }} -t ${{ steps.bump_versions.outputs.new_version }} .
+        docker build -t ${{ steps.bump_versions.outputs.new_version }} .
         IMAGE_TAG=${{ steps.bump_versions.outputs.new_version }}
         ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.us-east-1.amazonaws.com
         REPOSITORY=runners
