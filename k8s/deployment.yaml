@@ -1,39 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: github-runner
+  name: github-actions-runner
+  labels:
+    app: github-actions-runner
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: github-runner
+      app: github-actions-runner
   template:
     metadata:
       labels:
-        app: github-runner
+        app: github-actions-runner
     spec:
       containers:
-      - name: github-runner
-        image: 368085106192.dkr.ecr.us-east-1.amazonaws.com/runners:latest
-        env:
-        - name: RUNNER_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: github-runner-secret
-              key: RUNNER_TOKEN
-        - name: RUNNER_REPOSITORY_URL
-          valueFrom:
-            configMapKeyRef:
-              name: github-runner-config
-              key: RUNNER_REPOSITORY_URL
-        volumeMounts:
-        - name: docker-socket
-          mountPath: /var/run/docker.sock
-      volumes:
-      - name: docker-socket
-        hostPath:
-          path: /var/run/docker.sock
-
-        
-
-        
+        - name: github-actions-runner
+          image: cafanwii/github-actions-runner:latest
+          env:
+            - name: GH_OWNER
+              value: "sosotechnologies"
+            - name: GH_REPOSITORY
+              value: "runners"
+            - name: GH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: github-token-secret
+                  key: GH_TOKEN

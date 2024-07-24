@@ -1,24 +1,31 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Workflow
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  generateName: world-pipeline-runs-
-  namespace: argo
+  name: github-actions-runner
+  labels:
+    app: github-actions-runner
 spec:
-  workflowTemplateRef:
-    name: world-pipeline
-  arguments:
-    parameters:
-      - name: cluster
-        value: "my-cluster"
-      - name: imageRepo
-        value: "my-repo"
-      - name: worldName
-        value: "my-world"
-      - name: worldId
-        value: "world-123"
-      - name: logLocation
-        value: "my-logs"
-      - name: version
-        value: "2.1.64"
-      - name: worldInfoLocation
-        value: "info-location"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-actions-runner
+  template:
+    metadata:
+      labels:
+        app: github-actions-runner
+    spec:
+      containers:
+        - name: github-actions-runner
+          image: cafanwii/github-actions-runner:latest
+          env:
+            - name: VERSION
+              value: "2.1.11"
+            - name: GH_OWNER
+              value: "sosotechnologies"
+            - name: GH_REPOSITORY
+              value: "runners"
+            - name: GH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: github-token-secret
+                  key: GH_TOKEN

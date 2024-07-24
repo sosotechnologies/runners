@@ -1,15 +1,13 @@
 #!/bin/bash
 
-echo "GH_OWNER=${GH_OWNER}"
-echo "GH_REPOSITORY=${GH_REPOSITORY}"
-echo "GH_TOKEN=${GH_TOKEN}"
+GH_OWNER=$GH_OWNER
+GH_REPOSITORY=$GH_REPOSITORY
+GH_TOKEN=$GH_TOKEN
 
 RUNNER_SUFFIX=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)
 RUNNER_NAME="dockerNode-${RUNNER_SUFFIX}"
 
-# Fetch the registration token from GitHub
 REG_TOKEN=$(curl -sX POST -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/${GH_OWNER}/${GH_REPOSITORY}/actions/runners/registration-token | jq .token --raw-output)
-echo "REG_TOKEN=${REG_TOKEN}"
 
 cd /home/docker/actions-runner
 
