@@ -29,3 +29,5 @@ spec:
                 secretKeyRef:
                   name: github-token-secret
                   key: GH_TOKEN
+      imagePullSecrets:
+        - name: docker-registry ecr-secret
