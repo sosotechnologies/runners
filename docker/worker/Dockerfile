@@ -20,11 +20,11 @@ RUN apt-get install -y --no-install-recommends \
 # Download and setup GitHub Actions runner
 RUN cd /home/docker && mkdir actions-runner && cd actions-runner && \
     curl -o actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz && \
-    echo "${RUNNER_CHECKSUM}  actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz" | shasum -a 256 -c && \
+    echo "${RUNNER_CHECKSUM}  actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz" | sha256sum -c && \
     tar xzf ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz
 
 # Install additional dependencies
-RUN chown -R docker /home/docker && /home/docker/actions-runner/bin/installdependencies.sh
+RUN chown -R docker:docker /home/docker && /home/docker/actions-runner/bin/installdependencies.sh
 
 # Add and set up the start script
 ADD runner-scripts/start.sh /home/docker/start.sh
