@@ -65,7 +65,7 @@ jobs:
         docker push $ECR_REGISTRY/$REPOSITORY:latest
         cd ../..
 
-    - name: Run Trivy vulnerability scanner for worker
+    - name: Run Trivy vulnerability scanner for runner
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.us-east-1.amazonaws.com/runners:${{ steps.bump_versions.outputs.new_version }}
