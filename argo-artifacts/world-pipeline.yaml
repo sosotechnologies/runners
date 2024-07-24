@@ -30,4 +30,4 @@ spec:
                   name: github-token-secret
                   key: GH_TOKEN
       imagePullSecrets:
-        - name: ecr-secret
+        - name: ecr-registry-secret
