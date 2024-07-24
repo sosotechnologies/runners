@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: github-actions-runner
-          image: cafanwii/github-actions-runner:latest
+          image: 368085106192.dkr.ecr.us-east-1.amazonaws.com/runners:${VERSION}
           env:
             - name: VERSION
               value: "2.1.80"
