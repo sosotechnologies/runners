@@ -1,55 +1,23 @@
-.
-├── README.md
-├── VERSION
-├── argo-artifacts
-│   ├── application.yaml
-│   ├── kustomization.yaml
-│   ├── recon-pipeline.yaml
-│   ├── source-pipeline.yaml
-│   └── world-pipeline.yaml
-├── docker
-│   └── worker
-│       ├── Dockerfile
-│       └── runner-scripts
-│           └── start.sh
-├── k8s
-│   ├── configmap.yaml
-│   ├── deployment.yaml
-│   ├── secret.yaml
-│   └── service.yaml
-└── scripts
-    └── bump_version.sh
+## 1. Build the docker image
+docker build -t cafanwii/github-actions-runner .
+docker push cafanwii/github-actions-runner:latest
 
-## building with the pipeline
-
-## After building, create an AWS Secret and GH PAT secret
-
-```sh
-kubectl create secret docker-registry ecr-secret \
-  --docker-server=368085106192.dkr.ecr.us-east-1.amazonaws.com \
-  --docker-username=AWS \
-  --docker-password=$(aws ecr get-login-password --region us-east-1) \
-  #--namespace=argo \
-  --docker-email=example@example.com  \
-  --dry-run=client -o yaml > awsecr-secret.yaml
-```
+## 2. create a secret with your github PAT
 
 ```sh
 kubectl create secret generic github-token-secret --from-literal=GH_TOKEN=github_pat_11A34YAFQ0U4xr.........
 ```
 
+## 3. Apply the deployment and service files
+
 ```sh
-echo -n 'your-token-here' | base64
-
-kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/secret.yaml
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
-kubectl get pods -l app=github-actions-runner
-
+kubectl apply -f argo-artifacts/world-pipeline.yaml
+kubectl apply -f argo-artifacts/service.yaml
 ```
 
-## building and running with docker locally
+
+
+## OPTIONAL building and running with docker locally
 ```sh
 docker build -t cafanwii/github-actions-runner .
 ```
@@ -100,6 +68,19 @@ git branch -m main: Renames the current branch to main.
 git push -f origin main: Force pushes the new main branch to the remote repository, overwriting the existing history. -->
 
 
+## building with the pipeline
+
+## After building, create an AWS Secret and GH PAT secret
+
+```sh
+kubectl create secret docker-registry ecr-secret \
+  --docker-server=368085106192.dkr.ecr.us-east-1.amazonaws.com \
+  --docker-username=AWS \
+  --docker-password=$(aws ecr get-login-password --region us-east-1) \
+  #--namespace=argo \
+  --docker-email=example@example.com  \
+  --dry-run=client -o yaml > awsecr-secret.yaml
+```
 
 
 

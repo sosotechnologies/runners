@@ -6,14 +6,14 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/sosotechnologies/ecr-build-push-with-version.git'
+    repoURL: https://github.com/sosotechnologies/runners.git
     targetRevision: HEAD
     path: argo-artifacts
     kustomize:
       namePrefix: argo-artifacts-
   destination:
     namespace: default
-    server: 'https://kubernetes.default.svc'
+    server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       prune: true
