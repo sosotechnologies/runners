@@ -27,8 +27,6 @@ jobs:
       run: |
         new_version=$(cat VERSION)
         echo "Updating YAML files with versions $new_version"
-        sed -i "s/value: \"[0-9.]*\"/value: \"$new_version\"/g" argo-artifacts/source-pipeline.yaml
-        sed -i "s/value: \"[0-9.]*\"/value: \"$new_version\"/g" argo-artifacts/recon-pipeline.yaml
         sed -i "s/value: \"[0-9.]*\"/value: \"$new_version\"/g" argo-artifacts/world-pipeline.yaml
         echo "Updated YAML files"
 
@@ -36,7 +34,7 @@ jobs:
       run: |
         git config --global user.name 'sosotechnologies'
         git config --global user.email 'sosotech2000@gmail.com'
-        git add VERSION argo-artifacts/source-pipeline.yaml argo-artifacts/recon-pipeline.yaml argo-artifacts/world-pipeline.yaml
+        git add VERSION argo-artifacts/world-pipeline.yaml
         git commit -m "Bump versions to ${{ steps.bump_versions.outputs.new_version }}" || echo "No changes to commit"
         git stash
         git pull --rebase origin main
