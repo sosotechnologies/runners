@@ -1,6 +1,7 @@
 FROM ubuntu:24.04
 
 ARG RUNNER_VERSION=2.317.0
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 LABEL Author="cafanwi"
@@ -19,7 +20,7 @@ RUN apt-get install -y --no-install-recommends \
 # Download and setup GitHub Actions runner
 RUN cd /home/docker && mkdir actions-runner && cd actions-runner && \
     curl -o actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz && \
-    echo "a74dcd1612476eaf4b11c15b3db5a43a4f459c1d3c1807f8148aeb9530d69826  actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz" | shasum -a 256 -c && \
+    echo "9e883d210df8c6028aff475475a457d380353f9d01877d51cc01a17b2a91161d  actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz" | shasum -a 256 -c && \
     tar xzf ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz
 
 # Install additional dependencies
