@@ -19,7 +19,7 @@ spec:
           image: cafanwii/github-actions-runner:latest
           env:
             - name: VERSION
-              value: "2.1.68"
+              value: "2.1.69"
             - name: GH_OWNER
               value: "sosotechnologies"
             - name: GH_REPOSITORY
