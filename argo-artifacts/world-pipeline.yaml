@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: github-actions-runner
-          image: 368085106192.dkr.ecr.us-east-1.amazonaws.com/runners:${VERSION}
+          image: 368085106192.dkr.ecr.us-east-1.amazonaws.com/runners
           env:
             - name: VERSION
               value: "2.1.82"
