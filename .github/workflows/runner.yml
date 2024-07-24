@@ -35,7 +35,7 @@ jobs:
         git config --global user.name 'sosotechnologies'
         git config --global user.email 'sosotech2000@gmail.com'
         git add VERSION argo-artifacts/world-pipeline.yaml
-        git commit -m "Bump versions to ${{ steps.bump_versions.outputs.new_version }}" || echo "No changes to commit"
+        git commit -m "current runner version: ${{ steps.bump_versions.outputs.new_version }}" || echo "No changes to commit"
         git stash
         git pull --rebase origin working-before-changes-7-24
         git stash pop || echo "No stashed changes"
