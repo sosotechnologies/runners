@@ -3,7 +3,7 @@ name: XCite CI/CD with Argo
 on:
   push:
     branches:
-      - main
+      - runner-07-27
 
 jobs:
   build:
@@ -37,9 +37,9 @@ jobs:
         git add VERSION argo-artifacts/world-pipeline.yaml
         git commit -m "Bump versions to ${{ steps.bump_versions.outputs.new_version }}" || echo "No changes to commit"
         git stash
-        git pull --rebase origin main
+        git pull --rebase origin runner-07-27
         git stash pop || echo "No stashed changes"
-        git push origin main
+        git push origin runner-07-27
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
