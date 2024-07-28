@@ -27,14 +27,14 @@ jobs:
       run: |
         new_version=$(cat VERSION)
         echo "Updating YAML files with versions $new_version"
-        sed -i "s/value: \"[0-9.]*\"/value: \"$new_version\"/g" argo-artifacts/world-pipeline.yaml
+        sed -i "s/value: \"[0-9.]*\"/value: \"$new_version\"/g" argo-artifacts/deployment.yaml
         echo "Updated YAML files"
 
     - name: Commit updated files
       run: |
         git config --global user.name 'sosotechnologies'
         git config --global user.email 'sosotech2000@gmail.com'
-        git add VERSION argo-artifacts/world-pipeline.yaml
+        git add VERSION argo-artifacts/deployment.yaml
         git commit -m "current runner version: ${{ steps.bump_versions.outputs.new_version }}" || echo "No changes to commit"
         git stash
         git pull --rebase origin working-before-changes-7-24
@@ -52,9 +52,9 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build and Push worker image
+    - name: Build and Push runner image
       run: |
-        cd docker/worker
+        cd docker/runner
         docker build -t ${{ steps.bump_versions.outputs.new_version }} .
         IMAGE_TAG=${{ steps.bump_versions.outputs.new_version }}
         ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.us-east-1.amazonaws.com
@@ -74,17 +74,10 @@ jobs:
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'MEDIUM,HIGH,CRITICAL'
-        output: 'docker/worker/trivy-report-worker.txt'
+        output: 'docker/runner/trivy-report-runner.txt'
 
-    - name: Upload Trivy report for worker
+    - name: Upload Trivy report for runner
       uses: actions/upload-artifact@v3
       with:
-        name: trivy-report-worker
-        path: docker/worker/trivy-report-worker.txt
-
-    ## Adding job to trigger pull request pipeline
-    - name: Trigger Pull Request Workflow
-      uses: peter-evans/repository-dispatch@v2
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        event-type: open-pull-request
+        name: trivy-report-runner
+        path: docker/runner/trivy-report-runner.txt

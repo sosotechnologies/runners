@@ -1,24 +1,18 @@
-https://github.com/actions/runner/releases
+[GH-Runnere-Release](https://github.com/actions/runner/releases)
 
 .
 ├── README.md
 ├── VERSION
 ├── argo-artifacts
 │   ├── application.yaml
+│   ├── deployment.yaml
 │   ├── kustomization.yaml
-│   ├── recon-pipeline.yaml
-│   ├── source-pipeline.yaml
-│   └── world-pipeline.yaml
+│   └── service.yaml
 ├── docker
-│   └── worker
+│   └── runner
 │       ├── Dockerfile
 │       └── runner-scripts
 │           └── start.sh
-├── k8s
-│   ├── configmap.yaml
-│   ├── deployment.yaml
-│   ├── secret.yaml
-│   └── service.yaml
 └── scripts
     └── bump_version.sh
 
@@ -28,12 +22,10 @@ https://github.com/actions/runner/releases
 
 ```sh
 kubectl create secret docker-registry ecr-secret \
-  --docker-server=368085106192.dkr.ecr.us-east-1.amazonaws.com \
-  --docker-username=AWS \
-  --docker-password=$(aws ecr get-login-password --region us-east-1) \
-  #--namespace=argo \
-  --docker-email=example@example.com  \
-  --dry-run=client -o yaml > awsecr-secret.yaml
+    --docker-server=368085106192.dkr.ecr.us-east-1.amazonaws.com \
+    --docker-username=AWS \
+    --docker-password=$(aws ecr get-login-password --region us-east-1) \
+    --docker-email=youremail@example.com
 ```
 
 ```sh
@@ -67,10 +59,6 @@ docker run -d --name github-actions-runner \
 ```sh
 docker logs github-actions-runner
 ```
-
-
-
-
 
 ## Extras ###################
 

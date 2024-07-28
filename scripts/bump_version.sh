@@ -2,7 +2,7 @@
 
 # Check if VERSION file exists
 if [ ! -f VERSION]; then
-  echo "2.1.60" > VERSION
+  echo "2.1.11" > VERSION
 fi
 
 current_version=$(cat VERSION)
