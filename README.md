@@ -18,6 +18,9 @@
     └── bump_version.sh
 ```
 
+## create an ecr registry
+caller: runners
+
 ## building with the pipeline
 
 ## After building, create an AWS Secret and GH PAT secret
