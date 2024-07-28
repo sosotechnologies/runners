@@ -81,3 +81,10 @@ jobs:
       with:
         name: trivy-report-worker
         path: docker/worker/trivy-report-worker.txt
+
+    ## Adding job to trigger pull request pipeline
+    - name: Trigger Pull Request Workflow
+      uses: peter-evans/repository-dispatch@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        event-type: open-pull-request
