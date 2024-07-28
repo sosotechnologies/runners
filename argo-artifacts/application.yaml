@@ -1,19 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: runner
+  name: my-runner-app
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/sosotechnologies/runners.git
-    targetRevision: working-before-changes-7-24 
+    repoURL: 'https://github.com/sosotechnologies/runners.git'
+    targetRevision: HEAD
     path: argo-artifacts
-    kustomize:
-      namePrefix: argo-artifacts-
   destination:
+    server: 'https://kubernetes.default.svc'
     namespace: default
-    server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       prune: true
