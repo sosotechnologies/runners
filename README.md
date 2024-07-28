@@ -1,5 +1,6 @@
 [GH-Runnere-Release](https://github.com/actions/runner/releases)
 
+```yaml
 .
 ├── README.md
 ├── VERSION
@@ -15,6 +16,7 @@
 │           └── start.sh
 └── scripts
     └── bump_version.sh
+```
 
 ## building with the pipeline
 
@@ -28,22 +30,20 @@ kubectl create secret docker-registry ecr-registry-secret \
     --docker-email=youremail@example.com
 ```
 
+## create a secret of your GH token
 ```sh
 kubectl create secret generic github-token-secret --from-literal=GH_TOKEN=github_pat_11A34YAFQ0U4xr.........
 ```
 
+## Apply the argo application
 ```sh
-echo -n 'your-token-here' | base64
-
-kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/secret.yaml
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
+kubectl apply -f argo-artifacts/application.yaml
 kubectl get pods -l app=github-actions-runner
-
 ```
 
-## building and running with docker locally
+## OPTIONALLY ###
+
+### building and running with docker locally
 ```sh
 docker build -t cafanwii/github-actions-runner .
 ```
@@ -65,11 +65,6 @@ docker logs github-actions-runner
 ### Aws Ecr Login
 ```sh
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <your-account-number>.dkr.ecr.us-east-1.amazonaws.com
-
-docker pull 368085106192.dkr.ecr.us-east-1.amazonaws.com/runners:latest
-
-docker run -itd <your-account-number>.dkr.ecr.us-east-1.amazonaws.com/runners:latest
-
 ```
 
 ### Force  git push
@@ -81,14 +76,6 @@ git branch -D main
 git branch -m main
 git push -f origin main
 ```
-
-<!-- git checkout --orphan temp_branch: Creates a new branch with no commit history.
-git add -A: Adds all files to the staging area.
-git commit -am "Initial commit": Commits all files with the message "Initial commit."
-git branch -D main: Deletes the old main branch.
-git branch -m main: Renames the current branch to main.
-git push -f origin main: Force pushes the new main branch to the remote repository, overwriting the existing history. -->
-
 
 
 
