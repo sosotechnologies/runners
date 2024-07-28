@@ -21,7 +21,7 @@
 ## After building, create an AWS Secret and GH PAT secret
 
 ```sh
-kubectl create secret docker-registry ecr-secret \
+kubectl create secret docker-registry ecr-registry-secret \
     --docker-server=368085106192.dkr.ecr.us-east-1.amazonaws.com \
     --docker-username=AWS \
     --docker-password=$(aws ecr get-login-password --region us-east-1) \
